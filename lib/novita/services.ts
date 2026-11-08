@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { novita, LLM_MODEL, type LLMModel } from "./config";
+// ai service for handling chat completions with Novita API
 
 const BASE_SYSTEM_PROMPT =
   "You are a helpful assistant for a contractor company named Perfect Joint Drywall. Keep answers short and concise, and provide clear instructions when necessary.";
