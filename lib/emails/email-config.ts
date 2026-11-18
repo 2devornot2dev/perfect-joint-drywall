@@ -12,7 +12,7 @@ export const BUSINESS = {
   tagline: "Drywall & Carpentry",
   phone: "(647) 514-2453",
   phoneHref: "tel:+16475142453",
-  email: "info@perfectjointdrywall.com",
+  email: "perfectjointdrywall@gmail.com",
   serviceArea: "Greater Toronto & Surrounding Areas",
 } as const;
 
