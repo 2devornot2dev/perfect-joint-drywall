@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
 import React, { useState } from "react";
 import { Phone, Mail, MapPin, ArrowRight } from "lucide-react";
 
+import { Reveal } from "@/components/misc/reveal";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -35,14 +36,12 @@ export default function ContactSection() {
     // Grab the form before any await (currentTarget is cleared after the handler returns)
     const form = e.currentTarget;
 
-    // Make sure they selected a project type
     if (!projectType) {
       setProjectTypeError(true);
       return;
     }
     setProjectTypeError(false);
 
-    // Collect all form data in one place
     const formData = new FormData(form);
     const name = formData.get("name") as string;
     const phone = formData.get("phone") as string;
@@ -69,76 +68,98 @@ export default function ContactSection() {
     // });
     console.log("Form data:", data);
 
-    // Show success message and reset form
     setSubmitted(true);
     form.reset();
     setProjectType(null);
 
-    // Hide success message after 5 seconds
     setTimeout(() => setSubmitted(false), 5000);
   };
 
   return (
-    <section id="contact" className="bg-stone-950 py-20 lg:py-32">
-      <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+    <section
+      id="contact"
+      className="overflow-x-clip bg-stone-950 py-20 lg:py-32"
+    >
+      <div className="container mx-auto max-w-7xl px-4 md:px-6">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left Column: Contact Information */}
           <div className="flex flex-col justify-center">
-            <h2 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-              Let's Discuss Your Project
-            </h2>
-            <p className="mt-4 text-lg text-stone-400 max-w-lg">
-              Get in touch with us today for a free, no-obligation quote. Our team is ready to help with any drywall needs.
-            </p>
+            <Reveal
+              as="h2"
+              x={-24}
+              y={0}
+              className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl"
+            >
+              Let&rsquo;s Discuss Your Project
+            </Reveal>
 
-            <div className="mt-12 space-y-8">
-              <a
-                href="tel:+16475142453"
-                className="group flex items-center gap-5 transition-all hover:-translate-y-1"
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg transition-colors group-hover:bg-primary/90">
-                  <Phone className="h-6 w-6" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-stone-400">Call Us</div>
-                  <div className="text-xl font-bold text-white">(647) 514-2453</div>
-                </div>
-              </a>
+            <Reveal
+              as="p"
+              delay={0.1}
+              className="mt-4 max-w-lg text-lg text-stone-400"
+            >
+              Get in touch with us today for a free, no-obligation quote. Our
+              team is ready to help with any drywall needs.
+            </Reveal>
 
-              <a
-                href="mailto:info@perfectjointdrywall.com"
-                className="group flex items-center gap-5 transition-all hover:-translate-y-1"
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg transition-colors group-hover:bg-primary/90">
-                  <Mail className="h-6 w-6" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-stone-400">Email Us</div>
-                  <div className="text-xl font-bold text-white">info@perfectjointdrywall.com</div>
-                </div>
-              </a>
+            <ul className="mt-12 space-y-8">
+              <Reveal as="li" y={20} delay={0.2}>
+                <a
+                  href="tel:+16475142453"
+                  className="group flex items-center gap-5 transition-all hover:-translate-y-1"
+                >
+                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg transition-colors group-hover:bg-primary/90">
+                    <Phone className="h-6 w-6" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium text-stone-400">Call Us</div>
+                    <div className="text-xl font-bold text-white">(647) 514-2453</div>
+                  </div>
+                </a>
+              </Reveal>
 
-              <div className="flex items-center gap-5">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
-                  <MapPin className="h-6 w-6" />
+              <Reveal as="li" y={20} delay={0.3}>
+                <a
+                  href="mailto:info@perfectjointdrywall.com"
+                  className="group flex items-center gap-5 transition-all hover:-translate-y-1"
+                >
+                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg transition-colors group-hover:bg-primary/90">
+                    <Mail className="h-6 w-6" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium text-stone-400">Email Us</div>
+                    <div className="break-words text-xl font-bold text-white">
+                      info@perfectjointdrywall.com
+                    </div>
+                  </div>
+                </a>
+              </Reveal>
+
+              <Reveal as="li" y={20} delay={0.4}>
+                <div className="flex items-center gap-5">
+                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
+                    <MapPin className="h-6 w-6" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium text-stone-400">Service Area</div>
+                    <div className="text-xl font-bold text-white">
+                      Greater Toronto &amp; Surrounding Areas
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-sm font-medium text-stone-400">Service Area</div>
-                  <div className="text-xl font-bold text-white">Greater Toronto &amp; Surrounding Areas</div>
-                </div>
-              </div>
-            </div>
+              </Reveal>
+            </ul>
           </div>
 
           {/* Right Column: Contact Form */}
-          <div className="relative">
-            <Card className="shadow-2xl border-0 rounded-[2rem] bg-white sm:p-6 lg:p-8">
+          <Reveal x={48} y={0} duration={1} className="relative">
+            <Card className="rounded-[2rem] border-0 bg-white shadow-2xl sm:p-6 lg:p-8">
               <CardHeader className="pb-6">
                 <CardTitle className="text-3xl font-extrabold text-stone-900">
                   Request a Free Quote
                 </CardTitle>
-                <p className="text-stone-500 mt-2 text-base">
-                  Fill out the form below and we'll get back to you within 24 hours.
+                <p className="mt-2 text-base text-stone-500">
+                  Fill out the form below and we&rsquo;ll get back to you within 24 hours.
                 </p>
               </CardHeader>
               <CardContent>
@@ -150,6 +171,7 @@ export default function ContactSection() {
                         id="name"
                         name="name"
                         type="text"
+                        autoComplete="name"
                         required
                         placeholder="John Smith"
                         className="bg-stone-50"
@@ -161,6 +183,7 @@ export default function ContactSection() {
                         id="phone"
                         name="phone"
                         type="tel"
+                        autoComplete="tel"
                         required
                         placeholder="(555) 555-0100"
                         className="bg-stone-50"
@@ -174,6 +197,7 @@ export default function ContactSection() {
                       id="email"
                       name="email"
                       type="email"
+                      autoComplete="email"
                       required
                       placeholder="john@example.com"
                       className="bg-stone-50"
@@ -214,7 +238,7 @@ export default function ContactSection() {
                       </SelectContent>
                     </Select>
                     {projectTypeError && (
-                      <p className="text-sm text-red-600">
+                      <p role="alert" className="text-sm text-red-600">
                         Please select a project type.
                       </p>
                     )}
@@ -241,14 +265,17 @@ export default function ContactSection() {
                   </Button>
 
                   {submitted && (
-                    <div className="rounded-xl bg-green-50 px-4 py-4 text-center text-sm font-medium text-green-700 ring-1 ring-green-600/20">
+                    <div
+                      role="status"
+                      className="rounded-xl bg-green-50 px-4 py-4 text-center text-sm font-medium text-green-700 ring-1 ring-green-600/20"
+                    >
                       Thanks! We will be in touch within 24 hours.
                     </div>
                   )}
                 </form>
               </CardContent>
             </Card>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>
