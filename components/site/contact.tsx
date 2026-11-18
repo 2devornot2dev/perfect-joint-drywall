@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Phone, Mail, MapPin, ArrowRight } from "lucide-react";
 
 import { Reveal } from "@/components/misc/reveal";
+import { sendContactEmail } from "@/lib/actions/send-contact-email";
+import { projectTypeItems } from "@/lib/types/project-types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -18,61 +21,67 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-const projectTypeItems = [
-  { value: "installation", label: "Drywall Installation" },
-  { value: "taping", label: "Taping & Finishing" },
-  { value: "repair", label: "Repairs & Patching" },
-  { value: "other", label: "Other" },
-];
+const FALLBACK_ERROR =
+  "Something went wrong. Please try again or call us at (647) 514-2453.";
 
 export default function ContactSection() {
+  const router = useRouter();
   const [projectType, setProjectType] = useState<string | null>(null);
   const [projectTypeError, setProjectTypeError] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (submitting) return;
 
     // Grab the form before any await (currentTarget is cleared after the handler returns)
     const form = e.currentTarget;
 
+    // Make sure they selected a project type
     if (!projectType) {
       setProjectTypeError(true);
       return;
     }
     setProjectTypeError(false);
+    setSubmitError(null);
 
+    // Collect all form data in one place
     const formData = new FormData(form);
-    const name = formData.get("name") as string;
+    const name = (formData.get("name") as string).trim();
     const phone = formData.get("phone") as string;
     const email = formData.get("email") as string;
     const details = formData.get("details") as string;
+    const website = formData.get("website") as string; // honeypot
     const projectTypeLabel =
       projectTypeItems.find((item) => item.value === projectType)?.label ??
       projectType;
 
-    const data = {
-      name,
-      phone,
-      email,
-      projectType, // value, e.g. "taping"
-      projectTypeLabel, // label, e.g. "Taping & Finishing"
-      details,
-    };
+    setSubmitting(true);
+    try {
+      const result = await sendContactEmail({
+        name,
+        phone,
+        email,
+        projectType,
+        details,
+        website,
+      });
 
-    // TODO: Plug in your email action here, e.g.
-    // await fetch("/api/send-email", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(data),
-    // });
-    console.log("Form data:", data);
+      if (!result.success) {
+        setSubmitError(result.error);
+        setSubmitting(false);
+        return;
+      }
 
-    setSubmitted(true);
-    form.reset();
-    setProjectType(null);
-
-    setTimeout(() => setSubmitted(false), 5000);
+      // Only non-sensitive bits go in the URL: no phone, email or details
+      const params = new URLSearchParams({ name, type: projectTypeLabel });
+      router.push(`/thank-you?${params.toString()}`);
+    } catch {
+      setSubmitError(FALLBACK_ERROR);
+      setSubmitting(false);
+    }
+    // No reset or setSubmitting(false) on success: we're navigating away
   };
 
   return (
@@ -112,8 +121,12 @@ export default function ContactSection() {
                     <Phone className="h-6 w-6" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-stone-400">Call Us</div>
-                    <div className="text-xl font-bold text-white">(647) 514-2453</div>
+                    <div className="text-sm font-medium text-stone-400">
+                      Call Us
+                    </div>
+                    <div className="text-xl font-bold text-white">
+                      (647) 514-2453
+                    </div>
                   </div>
                 </a>
               </Reveal>
@@ -127,7 +140,9 @@ export default function ContactSection() {
                     <Mail className="h-6 w-6" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-stone-400">Email Us</div>
+                    <div className="text-sm font-medium text-stone-400">
+                      Email Us
+                    </div>
                     <div className="break-words text-xl font-bold text-white">
                       info@perfectjointdrywall.com
                     </div>
@@ -141,7 +156,9 @@ export default function ContactSection() {
                     <MapPin className="h-6 w-6" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-stone-400">Service Area</div>
+                    <div className="text-sm font-medium text-stone-400">
+                      Service Area
+                    </div>
                     <div className="text-xl font-bold text-white">
                       Greater Toronto &amp; Surrounding Areas
                     </div>
@@ -159,11 +176,27 @@ export default function ContactSection() {
                   Request a Free Quote
                 </CardTitle>
                 <p className="mt-2 text-base text-stone-500">
-                  Fill out the form below and we&rsquo;ll get back to you within 24 hours.
+                  Fill out the form below and we&rsquo;ll get back to you within
+                  24 hours.
                 </p>
               </CardHeader>
               <CardContent>
                 <form className="space-y-6" onSubmit={handleFormSubmit}>
+                  {/* Honeypot: hidden from users, bots fill it in */}
+                  <div
+                    aria-hidden
+                    className="absolute left-[-9999px] h-0 w-0 overflow-hidden"
+                  >
+                    <label htmlFor="website">Website</label>
+                    <input
+                      id="website"
+                      name="website"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+                  </div>
+
                   <div className="grid gap-6 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="name">Name</Label>
@@ -173,6 +206,7 @@ export default function ContactSection() {
                         type="text"
                         autoComplete="name"
                         required
+                        maxLength={100}
                         placeholder="John Smith"
                         className="bg-stone-50"
                       />
@@ -185,6 +219,7 @@ export default function ContactSection() {
                         type="tel"
                         autoComplete="tel"
                         required
+                        maxLength={30}
                         placeholder="(555) 555-0100"
                         className="bg-stone-50"
                       />
@@ -199,6 +234,7 @@ export default function ContactSection() {
                       type="email"
                       autoComplete="email"
                       required
+                      maxLength={254}
                       placeholder="john@example.com"
                       className="bg-stone-50"
                     />
@@ -251,6 +287,7 @@ export default function ContactSection() {
                       name="details"
                       rows={4}
                       required
+                      maxLength={3000}
                       placeholder="Tell us about your project..."
                       className="min-h-[120px] resize-none bg-stone-50"
                     />
@@ -258,18 +295,19 @@ export default function ContactSection() {
 
                   <Button
                     type="submit"
-                    className="mt-4 h-16 w-full gap-3 rounded-xl text-lg font-bold shadow-lg transition-all hover:scale-[1.02] hover:shadow-primary/30 active:scale-[0.98]"
+                    disabled={submitting}
+                    className="mt-4 h-16 w-full gap-3 rounded-xl text-lg font-bold shadow-lg transition-all hover:scale-[1.02] hover:shadow-primary/30 active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100"
                   >
-                    Send Request
-                    <ArrowRight className="h-6 w-6" />
+                    {submitting ? "Sending..." : "Send Request"}
+                    {!submitting && <ArrowRight className="h-6 w-6" />}
                   </Button>
 
-                  {submitted && (
+                  {submitError && (
                     <div
-                      role="status"
-                      className="rounded-xl bg-green-50 px-4 py-4 text-center text-sm font-medium text-green-700 ring-1 ring-green-600/20"
+                      role="alert"
+                      className="rounded-xl bg-red-50 px-4 py-4 text-center text-sm font-medium text-red-700 ring-1 ring-red-600/20"
                     >
-                      Thanks! We will be in touch within 24 hours.
+                      {submitError}
                     </div>
                   )}
                 </form>
