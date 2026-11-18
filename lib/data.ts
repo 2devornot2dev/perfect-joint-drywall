@@ -59,7 +59,7 @@ export const services = [
 
 export const stats = [
   { value: '10+', label: 'Years Experience' },
-  { value: '500+', label: 'Projects Completed' },
+  { value: '50+', label: 'Projects Completed' },
   { value: '100%', label: 'Satisfaction Guaranteed' },
   { value: '0', label: 'Callbacks Needed' },
 ];

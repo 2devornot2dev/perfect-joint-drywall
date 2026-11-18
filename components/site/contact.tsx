@@ -133,7 +133,7 @@ export default function ContactSection() {
 
               <Reveal as="li" y={20} delay={0.3}>
                 <a
-                  href="mailto:info@perfectjointdrywall.com"
+                  href="mailto:perfectjointdrywall@gmail.com"
                   className="group flex items-center gap-5 transition-all hover:-translate-y-1"
                 >
                   <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg transition-colors group-hover:bg-primary/90">
@@ -144,7 +144,7 @@ export default function ContactSection() {
                       Email Us
                     </div>
                     <div className="break-words text-xl font-bold text-white">
-                      info@perfectjointdrywall.com
+                      perfectjointdrywall@gmail.com
                     </div>
                   </div>
                 </a>
