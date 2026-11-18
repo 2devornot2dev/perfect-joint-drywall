@@ -5,7 +5,7 @@ export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://perfectjointdrywall.com"
 ).replace(/\/$/, "");
 
-export const LOGO_URL = `${SITE_URL}/new-logo-no-bg-no-text.png`;
+export const LOGO_URL = `https://res.cloudinary.com/dmllgn0t7/image/upload/v1795045151/logo-no-text.png`;
 
 export const BUSINESS = {
   name: "Perfect Joint Drywall",
